@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  rss-bridge:
+    image: rssbridge/rss-bridge:latest
+    container_name: rss-bridge
+    ports:
+      - "3000:80"
+    volumes:
+      - ./rss-bridge-config:/config
+    restart: unless-stopped
+
+  freshrss:
+    image: freshrss/freshrss:latest
+    container_name: freshrss
+    ports:
+      - "8080:80"
+    volumes:
+      - ./freshrss-data:/var/www/FreshRSS/data
+      - ./freshrss-extensions:/var/www/FreshRSS/extensions
+    environment:
+      - TZ=America/Los_Angeles
+      - CRON_MIN=*/15
+    restart: unless-stopped
