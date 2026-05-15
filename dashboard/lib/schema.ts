@@ -14,16 +14,16 @@ export const feeds = pgTable(
   {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
-    username: text("username").notNull(),
+    username: text("username"),
     rssUrl: text("rss_url").notNull(),
-    messengerUrl: text("messenger_url").notNull(),
+    messengerUrl: text("messenger_url"),
     lastFetchedAt: timestamp("last_fetched_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
   },
   (t) => ({
-    usernameIdx: uniqueIndex("feeds_username_idx").on(t.username),
+    rssUrlIdx: uniqueIndex("feeds_rss_url_idx").on(t.rssUrl),
   }),
 );
 

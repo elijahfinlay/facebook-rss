@@ -108,6 +108,10 @@ function parseRss(xml: string): ParsedItem[] {
   return items;
 }
 
+function isBridgeError(item: ParsedItem): boolean {
+  return /^Bridge returned error/i.test(item.title);
+}
+
 export async function fetchAndParse(feedUrl: string): Promise<ParsedItem[]> {
   const res = await fetch(feedUrl, {
     headers: {
@@ -121,9 +125,21 @@ export async function fetchAndParse(feedUrl: string): Promise<ParsedItem[]> {
     throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
   }
   const xml = await res.text();
-  if (xml.includes("<feed")) return parseAtom(xml);
-  if (xml.includes("<rss")) return parseRss(xml);
-  throw new Error("Unrecognized feed format (not Atom or RSS).");
+  let items: ParsedItem[];
+  if (xml.includes("<feed")) items = parseAtom(xml);
+  else if (xml.includes("<rss")) items = parseRss(xml);
+  else throw new Error("Unrecognized feed format (not Atom or RSS).");
+
+  // RSS-Bridge wraps scraper failures inside an otherwise-valid Atom feed
+  // whose single entry is titled "Bridge returned error 0! (NNNNN)".
+  // FacebookBridge is currently broken on every public instance because
+  // Meta blocks the scraper — surface that as a real error.
+  if (items.length > 0 && items.every(isBridgeError)) {
+    throw new Error(
+      "RSS-Bridge reported an upstream scraping failure (FacebookBridge is currently blocked by Meta on every public instance). Try a direct RSS/Atom URL instead.",
+    );
+  }
+  return items.filter((i) => !isBridgeError(i));
 }
 
 export async function refreshFeed(feedId: number): Promise<number> {

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export type FeedRowData = {
   id: number;
   name: string;
-  username: string;
+  username: string | null;
   rssUrl: string;
 };
 
@@ -36,7 +36,9 @@ export function FeedRow({ feed }: { feed: FeedRowData }) {
     <li className="flex items-center justify-between gap-3 px-4 py-4 sm:gap-4 sm:px-5">
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-ink-900">{feed.name}</p>
-        <p className="truncate text-xs text-ink-500">@{feed.username}</p>
+        <p className="truncate text-xs text-ink-500">
+          {feed.username ? `@${feed.username}` : feed.rssUrl}
+        </p>
         {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
       </div>
       <button
