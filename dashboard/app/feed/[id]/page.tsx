@@ -87,13 +87,13 @@ export default async function FeedDetailPage({
         Back to feeds
       </Link>
 
-      <div className="mt-4 mb-8 flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-ink-900">
+      <div className="mb-6 mt-4 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="truncate text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
             {feedName}
           </h1>
           {username && (
-            <p className="mt-1.5 text-sm text-ink-500">@{username}</p>
+            <p className="mt-1.5 truncate text-sm text-ink-500">@{username}</p>
           )}
         </div>
         {messengerLink && (
@@ -101,7 +101,7 @@ export default async function FeedDetailPage({
             href={messengerLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-md border border-ink-100 bg-white px-3.5 py-2 text-sm font-medium text-ink-700 shadow-sm transition hover:border-accent hover:bg-accent-soft hover:text-accent"
+            className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-md border border-ink-100 bg-white px-3.5 py-2 text-sm font-medium text-ink-700 shadow-sm transition hover:border-accent hover:bg-accent-soft hover:text-accent sm:w-auto"
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden>
               <path d="M12 2C6.48 2 2 6.13 2 11.2c0 2.88 1.43 5.45 3.66 7.13V22l3.35-1.84c.89.25 1.83.38 2.79.38 5.52 0 10-4.13 10-9.2C22 6.13 17.52 2 12 2Zm1 12.4-2.55-2.72L5.4 14.4l5.6-5.95 2.6 2.72 5.05-2.72-5.65 5.95Z" />

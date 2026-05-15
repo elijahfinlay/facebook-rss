@@ -31,21 +31,21 @@ export default async function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="text-3xl font-semibold tracking-tight text-ink-900">
+      <h1 className="text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
         Settings
       </h1>
       <p className="mt-1.5 text-sm text-ink-500">
         Connection status and feed management.
       </p>
 
-      <section className="mt-8 rounded-2xl border border-ink-100 bg-white p-6 shadow-card">
+      <section className="mt-6 rounded-2xl border border-ink-100 bg-white p-4 shadow-card sm:mt-8 sm:p-6">
         <h2 className="text-base font-semibold text-ink-900">Connections</h2>
         <p className="mt-1 text-sm text-ink-500">
           Set environment variables on Vercel or in{" "}
           <code className="rounded bg-surface-subtle px-1">.env.local</code>.
         </p>
 
-        <dl className="mt-5 divide-y divide-ink-100 rounded-xl border border-ink-100">
+        <dl className="mt-5 divide-y divide-ink-100 overflow-hidden rounded-xl border border-ink-100">
           <Row
             label="Neon database"
             envKey="DATABASE_URL"
@@ -67,8 +67,8 @@ export default async function SettingsPage() {
         </dl>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-ink-100 bg-white shadow-card">
-        <div className="border-b border-ink-100 px-6 py-5">
+      <section className="mt-6 rounded-2xl border border-ink-100 bg-white shadow-card sm:mt-8">
+        <div className="border-b border-ink-100 px-4 py-4 sm:px-6 sm:py-5">
           <h2 className="text-base font-semibold text-ink-900">
             Subscribed Feeds
           </h2>
@@ -108,11 +108,11 @@ function Row({
   ok?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 px-5 py-3">
-      <div>
+    <div className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
+      <div className="min-w-0">
         <dt className="flex items-center gap-2 text-sm font-medium text-ink-900">
           <span
-            className={`inline-block h-2 w-2 rounded-full ${
+            className={`inline-block h-2 w-2 shrink-0 rounded-full ${
               ok ? "bg-emerald-500" : "bg-amber-400"
             }`}
             aria-hidden
@@ -121,7 +121,7 @@ function Row({
         </dt>
         <dd className="ml-4 mt-0.5 text-xs text-ink-300">{envKey}</dd>
       </div>
-      <code className="max-w-[60%] truncate rounded bg-surface-subtle px-2 py-1 text-xs text-ink-700">
+      <code className="block max-w-full truncate rounded bg-surface-subtle px-2 py-1 text-xs text-ink-700 sm:max-w-[60%]">
         {value}
       </code>
     </div>

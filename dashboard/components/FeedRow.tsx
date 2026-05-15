@@ -33,8 +33,8 @@ export function FeedRow({ feed }: { feed: FeedRowData }) {
   }
 
   return (
-    <li className="flex items-center justify-between gap-4 px-5 py-4">
-      <div className="min-w-0">
+    <li className="flex items-center justify-between gap-3 px-4 py-4 sm:gap-4 sm:px-5">
+      <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-ink-900">{feed.name}</p>
         <p className="truncate text-xs text-ink-500">@{feed.username}</p>
         {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
@@ -43,7 +43,7 @@ export function FeedRow({ feed }: { feed: FeedRowData }) {
         type="button"
         onClick={onRemove}
         disabled={removing}
-        className="shrink-0 rounded-md border border-ink-100 bg-white px-3 py-1.5 text-xs font-medium text-ink-700 transition hover:border-red-200 hover:bg-red-50/60 hover:text-red-700 disabled:opacity-50"
+        className="inline-flex min-h-[40px] shrink-0 items-center justify-center rounded-md border border-ink-100 bg-white px-3 py-2 text-xs font-medium text-ink-700 transition hover:border-red-200 hover:bg-red-50/60 hover:text-red-700 disabled:opacity-50"
       >
         {removing ? "Removing…" : "Remove"}
       </button>

@@ -52,7 +52,7 @@ export default function AddFeedPage() {
 
   return (
     <div className="mx-auto max-w-xl">
-      <h1 className="text-3xl font-semibold tracking-tight text-ink-900">
+      <h1 className="text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
         Add a Facebook Page
       </h1>
       <p className="mt-1.5 text-sm text-ink-500">
@@ -62,13 +62,13 @@ export default function AddFeedPage() {
 
       <form
         onSubmit={onSubmit}
-        className="mt-8 rounded-2xl border border-ink-100 bg-white p-6 shadow-card"
+        className="mt-6 rounded-2xl border border-ink-100 bg-white p-4 shadow-card sm:mt-8 sm:p-6"
       >
         <label htmlFor="username" className="text-sm font-medium text-ink-900">
           Page username
         </label>
-        <div className="mt-2 flex items-center overflow-hidden rounded-md border border-ink-100 bg-white focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/15">
-          <span className="select-none border-r border-ink-100 bg-surface-subtle px-3 py-2 text-sm text-ink-500">
+        <div className="mt-2 flex min-h-[44px] items-stretch overflow-hidden rounded-md border border-ink-100 bg-white focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/15">
+          <span className="flex select-none items-center border-r border-ink-100 bg-surface-subtle px-3 text-sm text-ink-500">
             facebook.com /
           </span>
           <input
@@ -78,7 +78,8 @@ export default function AddFeedPage() {
             placeholder="nytimes"
             autoFocus
             autoComplete="off"
-            className="flex-1 bg-transparent px-3 py-2 text-sm text-ink-900 outline-none placeholder:text-ink-300"
+            inputMode="text"
+            className="min-w-0 flex-1 bg-transparent px-3 py-2 text-base text-ink-900 outline-none placeholder:text-ink-300 sm:text-sm"
           />
         </div>
         <p className="mt-2 text-xs text-ink-500">
@@ -89,7 +90,7 @@ export default function AddFeedPage() {
         </p>
 
         {clean && valid && (
-          <div className="mt-4 rounded-md bg-surface-subtle px-3 py-2 text-xs text-ink-500">
+          <div className="mt-4 break-all rounded-md bg-surface-subtle px-3 py-2 text-xs text-ink-500">
             <span className="font-medium text-ink-700">Messenger link:</span>{" "}
             <code>https://m.me/{clean}</code>
           </div>
@@ -107,18 +108,18 @@ export default function AddFeedPage() {
           </div>
         )}
 
-        <div className="mt-6 flex items-center justify-end gap-3">
+        <div className="mt-6 flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="rounded-md px-3 py-2 text-sm font-medium text-ink-500 transition hover:text-ink-900"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-md px-3 py-2 text-sm font-medium text-ink-500 transition hover:text-ink-900"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={!valid || submitting}
-            className="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? "Subscribing…" : "Subscribe"}
           </button>

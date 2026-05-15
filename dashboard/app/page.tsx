@@ -62,20 +62,20 @@ export default async function FeedsPage() {
 
   return (
     <div>
-      <div className="mb-8 flex items-end justify-between gap-4">
+      <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-ink-900">
+          <h1 className="text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">
             Your Feeds
           </h1>
           <p className="mt-1.5 text-sm text-ink-500">
             All your subscribed Facebook pages in one place.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <RefreshButton />
           <Link
             href="/add"
-            className="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-accent-hover"
+            className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-accent-hover sm:flex-none"
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden>
               <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5Z" />

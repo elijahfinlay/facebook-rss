@@ -23,7 +23,9 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body className="font-sans text-ink-900 antialiased">
         <Header />
-        <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
+        <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
+          {children}
+        </main>
       </body>
     </html>
   );

@@ -31,13 +31,17 @@ export function RefreshButton() {
   }
 
   return (
-    <div className="flex items-center gap-3">
-      {error && <span className="text-xs text-red-600">{error}</span>}
+    <div className="flex flex-1 items-center gap-3 sm:flex-none">
+      {error && (
+        <span className="truncate text-xs text-red-600" title={error}>
+          {error}
+        </span>
+      )}
       <button
         type="button"
         onClick={onClick}
         disabled={busy}
-        className="inline-flex items-center gap-1.5 rounded-md border border-ink-100 bg-white px-3 py-2 text-sm font-medium text-ink-700 shadow-sm transition hover:border-accent hover:bg-accent-soft hover:text-accent disabled:opacity-50"
+        className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-md border border-ink-100 bg-white px-3 py-2 text-sm font-medium text-ink-700 shadow-sm transition hover:border-accent hover:bg-accent-soft hover:text-accent disabled:opacity-50 sm:flex-none"
       >
         <svg
           viewBox="0 0 24 24"

@@ -11,9 +11,9 @@ export type PostCardData = {
 
 export function PostCard({ post }: { post: PostCardData }) {
   return (
-    <article className="rounded-2xl border border-ink-100 bg-white p-6 shadow-card">
-      <header className="flex items-center justify-between gap-3">
-        <h2 className="text-[15px] font-semibold leading-snug text-ink-900">
+    <article className="rounded-2xl border border-ink-100 bg-white p-4 shadow-card sm:p-6">
+      <header className="flex items-start justify-between gap-3">
+        <h2 className="min-w-0 break-words text-[15px] font-semibold leading-snug text-ink-900">
           {post.title || "Untitled post"}
         </h2>
         <time className="shrink-0 text-xs text-ink-300">
@@ -22,7 +22,7 @@ export function PostCard({ post }: { post: PostCardData }) {
       </header>
 
       {post.text && (
-        <p className="mt-3 whitespace-pre-line text-[15px] leading-relaxed text-ink-700">
+        <p className="mt-3 whitespace-pre-line break-words text-[15px] leading-relaxed text-ink-700">
           {post.text}
         </p>
       )}
@@ -51,7 +51,7 @@ export function PostCard({ post }: { post: PostCardData }) {
           href={post.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-accent transition hover:text-accent-hover"
+          className="inline-flex min-h-[40px] items-center gap-1.5 text-sm font-medium text-accent transition hover:text-accent-hover"
         >
           View on Facebook
           <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5" aria-hidden>

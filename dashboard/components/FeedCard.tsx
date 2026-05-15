@@ -49,7 +49,7 @@ export function FeedCard({ feed }: { feed: FeedCardData }) {
           href={feed.messengerUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="z-10 inline-flex items-center gap-1.5 rounded-md border border-ink-100 bg-white px-2.5 py-1 text-xs font-medium text-ink-700 transition hover:border-accent hover:bg-accent-soft hover:text-accent"
+          className="relative z-10 inline-flex min-h-[36px] items-center gap-1.5 rounded-md border border-ink-100 bg-white px-3 py-1.5 text-xs font-medium text-ink-700 transition hover:border-accent hover:bg-accent-soft hover:text-accent"
           onClick={(e) => e.stopPropagation()}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5" aria-hidden>
