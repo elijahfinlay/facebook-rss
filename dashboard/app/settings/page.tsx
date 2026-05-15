@@ -1,26 +1,30 @@
-import { listSubscriptions } from "@/lib/freshrss";
+import { desc } from "drizzle-orm";
+import { db, schema } from "@/lib/db";
 import { FeedRow, type FeedRowData } from "@/components/FeedRow";
 import { ErrorState } from "@/components/EmptyState";
-import { extractFacebookUsername } from "@/lib/util";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function SettingsPage() {
-  const freshRssUrl = process.env.FRESHRSS_URL ?? "http://localhost:8080";
-  const rssBridgeUrl = process.env.RSS_BRIDGE_URL ?? "http://localhost:3000";
-  const user = process.env.FRESHRSS_USER ?? "";
+  const rssBridge =
+    process.env.RSS_BRIDGE_URL ?? "https://rss-bridge.org/bridge01";
+  const dbConfigured = Boolean(process.env.DATABASE_URL);
+  const cronSecretConfigured = Boolean(process.env.CRON_SECRET);
 
   let feeds: FeedRowData[] = [];
   let errorMessage: string | null = null;
   try {
-    const subs = await listSubscriptions();
-    feeds = subs.map((s) => ({
-      id: s.id,
-      title: s.title,
-      url: s.url,
-      username: extractFacebookUsername(s.url, s.htmlUrl, s.title),
-    }));
+    const rows = await db
+      .select({
+        id: schema.feeds.id,
+        name: schema.feeds.name,
+        username: schema.feeds.username,
+        rssUrl: schema.feeds.rssUrl,
+      })
+      .from(schema.feeds)
+      .orderBy(desc(schema.feeds.createdAt));
+    feeds = rows;
   } catch (err) {
     errorMessage = err instanceof Error ? err.message : "Unknown error";
   }
@@ -31,25 +35,34 @@ export default async function SettingsPage() {
         Settings
       </h1>
       <p className="mt-1.5 text-sm text-ink-500">
-        Configure connection details and manage your subscribed feeds.
+        Connection status and feed management.
       </p>
 
       <section className="mt-8 rounded-2xl border border-ink-100 bg-white p-6 shadow-card">
         <h2 className="text-base font-semibold text-ink-900">Connections</h2>
         <p className="mt-1 text-sm text-ink-500">
-          Edit these values in{" "}
-          <code className="rounded bg-surface-subtle px-1">.env.local</code>{" "}
-          and restart the dashboard.
+          Set environment variables on Vercel or in{" "}
+          <code className="rounded bg-surface-subtle px-1">.env.local</code>.
         </p>
 
         <dl className="mt-5 divide-y divide-ink-100 rounded-xl border border-ink-100">
-          <Row label="FreshRSS URL" value={freshRssUrl} envKey="FRESHRSS_URL" />
-          <Row label="RSS-Bridge URL" value={rssBridgeUrl} envKey="RSS_BRIDGE_URL" />
-          <Row label="FreshRSS user" value={user || "(not set)"} envKey="FRESHRSS_USER" />
           <Row
-            label="FreshRSS password"
-            value={process.env.FRESHRSS_PASS ? "••••••••" : "(not set)"}
-            envKey="FRESHRSS_PASS"
+            label="Neon database"
+            envKey="DATABASE_URL"
+            value={dbConfigured ? "connected" : "(not set)"}
+            ok={dbConfigured}
+          />
+          <Row
+            label="RSS-Bridge instance"
+            envKey="RSS_BRIDGE_URL"
+            value={rssBridge}
+            ok
+          />
+          <Row
+            label="Cron secret"
+            envKey="CRON_SECRET"
+            value={cronSecretConfigured ? "set" : "(not set — recommended)"}
+            ok={cronSecretConfigured}
           />
         </dl>
       </section>
@@ -87,16 +100,26 @@ function Row({
   label,
   value,
   envKey,
+  ok,
 }: {
   label: string;
   value: string;
   envKey: string;
+  ok?: boolean;
 }) {
   return (
     <div className="flex items-center justify-between gap-4 px-5 py-3">
       <div>
-        <dt className="text-sm font-medium text-ink-900">{label}</dt>
-        <dd className="mt-0.5 text-xs text-ink-300">{envKey}</dd>
+        <dt className="flex items-center gap-2 text-sm font-medium text-ink-900">
+          <span
+            className={`inline-block h-2 w-2 rounded-full ${
+              ok ? "bg-emerald-500" : "bg-amber-400"
+            }`}
+            aria-hidden
+          />
+          {label}
+        </dt>
+        <dd className="ml-4 mt-0.5 text-xs text-ink-300">{envKey}</dd>
       </div>
       <code className="max-w-[60%] truncate rounded bg-surface-subtle px-2 py-1 text-xs text-ink-700">
         {value}

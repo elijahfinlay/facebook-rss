@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export type FeedRowData = {
-  id: string;
-  title: string;
-  url: string;
-  username: string | null;
+  id: number;
+  name: string;
+  username: string;
+  rssUrl: string;
 };
 
 export function FeedRow({ feed }: { feed: FeedRowData }) {
@@ -16,15 +16,11 @@ export function FeedRow({ feed }: { feed: FeedRowData }) {
   const [error, setError] = useState<string | null>(null);
 
   async function onRemove() {
-    if (!confirm(`Remove "${feed.title}"?`)) return;
+    if (!confirm(`Remove "${feed.name}"?`)) return;
     setRemoving(true);
     setError(null);
     try {
-      const res = await fetch("/api/feeds/remove", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ streamId: feed.id }),
-      });
+      const res = await fetch(`/api/feeds/${feed.id}`, { method: "DELETE" });
       const data = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !data.ok) {
         throw new Error(data.error || `Request failed (${res.status})`);
@@ -39,15 +35,9 @@ export function FeedRow({ feed }: { feed: FeedRowData }) {
   return (
     <li className="flex items-center justify-between gap-4 px-5 py-4">
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-ink-900">
-          {feed.title}
-        </p>
-        <p className="truncate text-xs text-ink-500">
-          {feed.username ? `@${feed.username}` : feed.url}
-        </p>
-        {error && (
-          <p className="mt-1 text-xs text-red-600">{error}</p>
-        )}
+        <p className="truncate text-sm font-medium text-ink-900">{feed.name}</p>
+        <p className="truncate text-xs text-ink-500">@{feed.username}</p>
+        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
       </div>
       <button
         type="button"

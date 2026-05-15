@@ -1,13 +1,9 @@
 import Link from "next/link";
-import { listSubscriptions, streamContents } from "@/lib/freshrss";
+import { and, desc, eq } from "drizzle-orm";
+import { db, schema } from "@/lib/db";
 import { PostCard, type PostCardData } from "@/components/PostCard";
 import { EmptyState, ErrorState } from "@/components/EmptyState";
-import {
-  extractFacebookUsername,
-  extractImageSrcs,
-  messengerUrl,
-  stripHtml,
-} from "@/lib/util";
+import { extractImageSrcs, stripHtml } from "@/lib/util";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -17,31 +13,64 @@ export default async function FeedDetailPage({
 }: {
   params: { id: string };
 }) {
-  const streamId = decodeURIComponent(params.id);
+  const feedId = Number(params.id);
+  if (!Number.isFinite(feedId) || feedId <= 0) {
+    return <ErrorState message="Invalid feed id." />;
+  }
 
-  let feedTitle = "Feed";
+  let feedName = "Feed";
   let username: string | null = null;
+  let messengerLink: string | null = null;
   let posts: PostCardData[] = [];
   let errorMessage: string | null = null;
 
   try {
-    const [subs, stream] = await Promise.all([
-      listSubscriptions(),
-      streamContents(streamId, 30),
-    ]);
-    const sub = subs.find((s) => s.id === streamId);
-    if (sub) {
-      feedTitle = sub.title;
-      username = extractFacebookUsername(sub.url, sub.htmlUrl, sub.title);
+    const [feed] = await db
+      .select()
+      .from(schema.feeds)
+      .where(eq(schema.feeds.id, feedId))
+      .limit(1);
+    if (!feed) {
+      return (
+        <EmptyState
+          title="Feed not found"
+          description="This feed may have been removed."
+          ctaHref="/"
+          ctaLabel="Back to feeds"
+        />
+      );
     }
-    posts = stream.items.map((it) => ({
+    feedName = feed.name;
+    username = feed.username;
+    messengerLink = feed.messengerUrl;
+
+    const rows = await db
+      .select()
+      .from(schema.items)
+      .where(eq(schema.items.feedId, feedId))
+      .orderBy(desc(schema.items.publishedAt))
+      .limit(30);
+
+    posts = rows.map((it) => ({
       id: it.id,
       title: it.title,
-      text: stripHtml(it.summaryHtml, 1200),
-      images: extractImageSrcs(it.summaryHtml, 4),
-      published: it.published,
-      link: it.canonicalUrl,
+      text: stripHtml(it.content, 1200),
+      images: extractImageSrcs(it.content, 4),
+      publishedAt: it.publishedAt,
+      link: it.link,
     }));
+
+    if (rows.length > 0) {
+      await db
+        .update(schema.items)
+        .set({ isRead: true })
+        .where(
+          and(
+            eq(schema.items.feedId, feedId),
+            eq(schema.items.isRead, false),
+          ),
+        );
+    }
   } catch (err) {
     errorMessage = err instanceof Error ? err.message : "Unknown error";
   }
@@ -61,15 +90,15 @@ export default async function FeedDetailPage({
       <div className="mt-4 mb-8 flex items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight text-ink-900">
-            {feedTitle}
+            {feedName}
           </h1>
           {username && (
             <p className="mt-1.5 text-sm text-ink-500">@{username}</p>
           )}
         </div>
-        {username && (
+        {messengerLink && (
           <a
-            href={messengerUrl(username)}
+            href={messengerLink}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 rounded-md border border-ink-100 bg-white px-3.5 py-2 text-sm font-medium text-ink-700 shadow-sm transition hover:border-accent hover:bg-accent-soft hover:text-accent"
@@ -87,7 +116,7 @@ export default async function FeedDetailPage({
       ) : posts.length === 0 ? (
         <EmptyState
           title="No posts yet"
-          description="There are no posts in this feed yet. RSS-Bridge may still be fetching, or the page hasn't posted recently."
+          description="Posts will appear here after the next refresh (every 15 minutes). If this page is rate-limited by Facebook, RSS-Bridge may return nothing."
         />
       ) : (
         <div className="flex flex-col gap-4">

@@ -8,6 +8,7 @@ export default function AddFeedPage() {
   const [username, setUsername] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const clean = username.trim().replace(/^@/, "");
   const valid = /^[A-Za-z0-9.\-_]+$/.test(clean);
@@ -17,15 +18,29 @@ export default function AddFeedPage() {
     if (!valid || submitting) return;
     setSubmitting(true);
     setError(null);
+    setNotice(null);
     try {
-      const res = await fetch("/api/feeds/add", {
+      const res = await fetch("/api/feeds", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: clean }),
       });
-      const data = (await res.json()) as { ok?: boolean; error?: string };
+      const data = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        initialItems?: number;
+        fetchError?: string | null;
+      };
       if (!res.ok || !data.ok) {
         throw new Error(data.error || `Request failed (${res.status})`);
+      }
+      if (data.fetchError) {
+        setNotice(
+          `Feed added, but initial fetch failed: ${data.fetchError}. The next cron run will retry.`,
+        );
+        router.refresh();
+        setSubmitting(false);
+        return;
       }
       router.push("/");
       router.refresh();
@@ -41,18 +56,15 @@ export default function AddFeedPage() {
         Add a Facebook Page
       </h1>
       <p className="mt-1.5 text-sm text-ink-500">
-        Paste a Facebook page username. We'll generate the RSS-Bridge URL and
-        subscribe you in FreshRSS.
+        Paste a Facebook page username. We'll generate the RSS-Bridge URL,
+        fetch the latest posts, and save them.
       </p>
 
       <form
         onSubmit={onSubmit}
         className="mt-8 rounded-2xl border border-ink-100 bg-white p-6 shadow-card"
       >
-        <label
-          htmlFor="username"
-          className="text-sm font-medium text-ink-900"
-        >
+        <label htmlFor="username" className="text-sm font-medium text-ink-900">
           Page username
         </label>
         <div className="mt-2 flex items-center overflow-hidden rounded-md border border-ink-100 bg-white focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/15">
@@ -70,7 +82,8 @@ export default function AddFeedPage() {
           />
         </div>
         <p className="mt-2 text-xs text-ink-500">
-          Examples: <code className="rounded bg-surface-subtle px-1">nytimes</code>,{" "}
+          Examples:{" "}
+          <code className="rounded bg-surface-subtle px-1">nytimes</code>,{" "}
           <code className="rounded bg-surface-subtle px-1">BBCNews</code>,{" "}
           <code className="rounded bg-surface-subtle px-1">NPR</code>
         </p>
@@ -79,6 +92,12 @@ export default function AddFeedPage() {
           <div className="mt-4 rounded-md bg-surface-subtle px-3 py-2 text-xs text-ink-500">
             <span className="font-medium text-ink-700">Messenger link:</span>{" "}
             <code>https://m.me/{clean}</code>
+          </div>
+        )}
+
+        {notice && (
+          <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            {notice}
           </div>
         )}
 

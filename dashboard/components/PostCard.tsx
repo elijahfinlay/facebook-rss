@@ -1,12 +1,12 @@
 import { timeAgo } from "@/lib/util";
 
 export type PostCardData = {
-  id: string;
+  id: number;
   title: string;
   text: string;
   images: string[];
-  published: number;
-  link?: string;
+  publishedAt: Date | string;
+  link: string;
 };
 
 export function PostCard({ post }: { post: PostCardData }) {
@@ -17,7 +17,7 @@ export function PostCard({ post }: { post: PostCardData }) {
           {post.title || "Untitled post"}
         </h2>
         <time className="shrink-0 text-xs text-ink-300">
-          {timeAgo(post.published)}
+          {timeAgo(post.publishedAt)}
         </time>
       </header>
 
@@ -46,21 +46,19 @@ export function PostCard({ post }: { post: PostCardData }) {
         </div>
       )}
 
-      {post.link && (
-        <footer className="mt-5 flex justify-end">
-          <a
-            href={post.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-accent transition hover:text-accent-hover"
-          >
-            View on Facebook
-            <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5" aria-hidden>
-              <path d="M14 3v2h3.6l-9.3 9.3 1.4 1.4L19 6.4V10h2V3h-7Zm-9 4h6V5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6h-2v6H5V7Z" />
-            </svg>
-          </a>
-        </footer>
-      )}
+      <footer className="mt-5 flex justify-end">
+        <a
+          href={post.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-accent transition hover:text-accent-hover"
+        >
+          View on Facebook
+          <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5" aria-hidden>
+            <path d="M14 3v2h3.6l-9.3 9.3 1.4 1.4L19 6.4V10h2V3h-7Zm-9 4h6V5H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6h-2v6H5V7Z" />
+          </svg>
+        </a>
+      </footer>
     </article>
   );
 }
