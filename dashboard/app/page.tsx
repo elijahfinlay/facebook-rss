@@ -3,6 +3,7 @@ import { desc, eq, sql } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { FeedCard, type FeedCardData } from "@/components/FeedCard";
 import { EmptyState, ErrorState } from "@/components/EmptyState";
+import { RefreshButton } from "@/components/RefreshButton";
 import { stripHtml, timeAgo } from "@/lib/util";
 
 export const dynamic = "force-dynamic";
@@ -70,15 +71,18 @@ export default async function FeedsPage() {
             All your subscribed Facebook pages in one place.
           </p>
         </div>
-        <Link
-          href="/add"
-          className="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-accent-hover"
-        >
-          <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden>
-            <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5Z" />
-          </svg>
-          Add Feed
-        </Link>
+        <div className="flex items-center gap-3">
+          <RefreshButton />
+          <Link
+            href="/add"
+            className="inline-flex items-center gap-1.5 rounded-md bg-accent px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-accent-hover"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden>
+              <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5Z" />
+            </svg>
+            Add Feed
+          </Link>
+        </div>
       </div>
 
       {errorMessage ? (
