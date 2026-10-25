@@ -11,9 +11,9 @@ export const revalidate = 0;
 export default async function FeedDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const feedId = Number(params.id);
+  const feedId = Number((await params).id);
   if (!Number.isFinite(feedId) || feedId <= 0) {
     return <ErrorState message="Invalid feed id." />;
   }

@@ -6,13 +6,12 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 async function run(req: Request) {
-  // If CRON_SECRET is set, require Bearer auth for non-Vercel cron calls.
-  // Vercel cron sets x-vercel-cron=1 on scheduled invocations, so we always
-  // accept those. Otherwise this endpoint is open — same threat model as
-  // the rest of the (unauthenticated) app.
+  // If CRON_SECRET is set, require it. Vercel cron sends
+  // Authorization: Bearer <CRON_SECRET> on scheduled invocations, and the
+  // in-app Refresh button is allowed from the same origin. (The x-vercel-cron
+  // header is not trusted because any client can send it.)
   const secret = process.env.CRON_SECRET;
-  const isVercelCron = req.headers.get("x-vercel-cron") === "1";
-  if (secret && !isVercelCron) {
+  if (secret) {
     const auth = req.headers.get("authorization");
     const fromSameOrigin =
       req.headers.get("sec-fetch-site") === "same-origin";

@@ -6,9 +6,9 @@ export const dynamic = "force-dynamic";
 
 export async function DELETE(
   _req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const id = Number(params.id);
+  const id = Number((await params).id);
   if (!Number.isFinite(id) || id <= 0) {
     return NextResponse.json({ error: "Invalid id." }, { status: 400 });
   }
